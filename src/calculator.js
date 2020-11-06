@@ -7,20 +7,24 @@ function calculateDiscount(vehicleId, promocode) {
 
 	let foundPromocode = promocodesDb.getPromocode(promocode)
 
-	if (foundVehicle && foundPromocode) {
+	if (foundVehicle) {
 
 		return isElegible(foundVehicle, foundPromocode)
+
+	} else {
+
+		return { error: 'CAR-NOT-FOUND' }
 	}
 }
 
-function isElegible(vehicle, promocode) {
+function isElegible(vehicle, promocode, callback) {
 
 	if (promocode.vehicles.length === 0 || promocode.vehicles.includes(vehicle._id)) {
 
 		return isOnOffer(vehicle, promocode)
 	} else {
 
-		return "This car is not elegible for the discount"
+		return { error: 'CAR-NOT-ELEGIBLE' }
 	}
 }
 
@@ -31,7 +35,6 @@ function isOnOffer(vehicle, promocode) {
 		discountByOffer: vehicle.price - vehicle.priceOnOffer,
 		discountByCode: 0
 	}
-
 
 	return applyPromocode(discountResponse, promocode)
 }

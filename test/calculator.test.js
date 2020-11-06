@@ -1,32 +1,23 @@
 
 const calculator = require("../src/calculator")
 
-describe("applyPromocode fn", () => {
-	test("applying percentage discount NON OFFER vehicle", () => {
-
-		let percentageResponseWithFloat = {
-			price: 50.49,
-			discountByOffer: 41,
-			discountByCode: 50.49
-		}
-
-		expect(calculator.calculateDiscount('nonOfferFloat', 'test50PercentageAll')).toMatchObject(percentageResponseWithFloat)
-
-		let percentageResponse = {
-			price: 50,
-			discountByOffer: 50,
-			discountByCode: 50
-		}
-		expect(calculator.calculateDiscount('nonOffer', 'test50PercentageAll')).toMatchObject(percentageResponse)
-
-	})
-})
-
 let promocodeWildcardPercentage = 'wildCardDiscountPercentage'
 let promocodeWildcardCredit = 'wildCardDiscountCredit'
 
 let promocodeSpecificPercentage = 'specificDiscountPercentage'
 let promocodeSpecificCredit = 'specificDiscountCredit'
+
+describe("Vehicle not found", () => {
+
+	test("Shouldn't find a car", () => {
+
+		let errorMsg = {
+			error: 'CAR-NOT-FOUND'
+		}
+
+		expect(calculator.calculateDiscount('nonExistentCar', 'anyPromocode')).toMatchObject(errorMsg)
+	})
+})
 
 describe("Vehicle on offer", () => {
 
@@ -87,7 +78,12 @@ describe("Vehicle on offer", () => {
 	})
 
 	test("Promocode is not aplicable to this car", () => {
-		expect(calculator.calculateDiscount(vehicleOnOffer, 'anyoneIsCompatible')).toBe('This car is not elegible for the discount')
+
+		let errorMsg = {
+			error: 'CAR-NOT-ELEGIBLE'
+		}
+
+		expect(calculator.calculateDiscount(vehicleOnOffer, 'noOneIsCompatible')).toMatchObject(errorMsg)
 	})
 })
 
@@ -150,6 +146,10 @@ describe("Vehicle is NOT on offer", () => {
 
 	test("Promocode is not aplicable to this car", () => {
 
-		expect(calculator.calculateDiscount(vehicleNotOnOffer, 'anyoneIsCompatible')).toBe('This car is not elegible for the discount')
+		let errorMsg = {
+			error: 'CAR-NOT-ELEGIBLE'
+		}
+
+		expect(calculator.calculateDiscount(vehicleNotOnOffer, 'noOneIsCompatible')).toMatchObject(errorMsg)
 	})
 })
