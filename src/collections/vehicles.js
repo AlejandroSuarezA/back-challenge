@@ -10,7 +10,7 @@ function isValidVehicle(vehicle) {
 		typeof vehicle.isOnOffer == "boolean"
 }
 
-async function storeVehicles(vehicles, onComplete) {
+async function storeVehicles(vehicles, callback) {
 
 	let allValidEntries = vehicles.every(vehicle => {
 
@@ -25,10 +25,10 @@ async function storeVehicles(vehicles, onComplete) {
 
 		await Promise.all(addVehiclesOperations)
 
-		onComplete(202)
+		callback(undefined, '')
 	} else {
 
-		onComplete(400)
+		callback('MISSING-FIELD', undefined)
 	}
 }
 

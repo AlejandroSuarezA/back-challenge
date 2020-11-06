@@ -1,1 +1,50 @@
-[{"_id":"5f6223d34a5a8ff0dc639dfa","price":359.99,"priceOnOffer":299.99,"isOnOffer":false},{"_id":"5ebd1d03f8f44c7c6b7d4391","price":559.99,"priceOnOffer":499.99,"isOnOffer":true},{"_id":"32133321223000388585abdhjhqwepio123bj","price":359.99,"priceOnOffer":299.99,"isOnOffer":false},{"_id":"testid","price":100,"priceOnOffer":50,"isOnOffer":false},{"_id":"nonOffer","price":100,"priceOnOffer":50,"isOnOffer":false},{"_id":"nonOfferFloat","price":100.99,"priceOnOffer":59.99,"isOnOffer":false},{"_id":"vehicleOnOffer","price":500,"priceOnOffer":350,"isOnOffer":true},{"_id":"vehicleNotOnOffer","price":500,"priceOnOffer":350,"isOnOffer":false}]
+[
+	{
+		"_id": "5f6223d34a5a8ff0dc639dfa",
+		"price": 359.99,
+		"priceOnOffer": 299.99,
+		"isOnOffer": false
+	},
+	{
+		"_id": "5ebd1d03f8f44c7c6b7d4391",
+		"price": 559.99,
+		"priceOnOffer": 499.99,
+		"isOnOffer": true
+	},
+	{
+		"_id": "32133321223000388585abdhjhqwepio123bj",
+		"price": 359.99,
+		"priceOnOffer": 299.99,
+		"isOnOffer": false
+	},
+	{
+		"_id": "testid",
+		"price": 100,
+		"priceOnOffer": 50,
+		"isOnOffer": false
+	},
+	{
+		"_id": "nonOffer",
+		"price": 100,
+		"priceOnOffer": 50,
+		"isOnOffer": false
+	},
+	{
+		"_id": "nonOfferFloat",
+		"price": 100.99,
+		"priceOnOffer": 59.99,
+		"isOnOffer": false
+	},
+	{
+		"_id": "vehicleOnOffer",
+		"price": 500,
+		"priceOnOffer": 350,
+		"isOnOffer": true
+	},
+	{
+		"_id": "vehicleNotOnOffer",
+		"price": 500,
+		"priceOnOffer": 350,
+		"isOnOffer": false
+	}
+]

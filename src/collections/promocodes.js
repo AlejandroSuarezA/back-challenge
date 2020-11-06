@@ -10,7 +10,7 @@ function isValidPromocode(promocode) {
 		Array.isArray(promocode.vehicles)
 }
 
-async function storePromocodes(promocodes, onComplete) {
+async function storePromocodes(promocodes, callback) {
 
 	let allValidEntries = promocodes.every(promocode => {
 
@@ -25,10 +25,10 @@ async function storePromocodes(promocodes, onComplete) {
 
 		await Promise.all(addPromocodesOperations)
 
-		onComplete(202)
+		callback(undefined, '')
 	} else {
 
-		onComplete(400)
+		callback('MISSING-FIELD', undefined)
 	}
 }
 
