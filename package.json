@@ -4,7 +4,8 @@
 	"main": "src/server.js",
 	"private": true,
 	"scripts": {
-		"test": "jest"
+		"test": "jest --coverage",
+		"start": "node server"
 	},
 	"dependencies": {
 		"@types/jest": "^26.0.15",
