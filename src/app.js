@@ -2,31 +2,18 @@
 const express = require("express");
 const app = express();
 
-const vehiclesDb = require("./collections/vehicles")
-const promocodesDb = require("./collections/promocodes")
+const vehicles = require("./collections/vehicles")
+const promocodes = require("./collections/promocodes")
 
-const calculator = require("./calculator")
+const calculateDiscount = require("./calculator")
 
-const errorCodes = {
-	'CAR-NOT-FOUND': {
-		"errorCode": 404,
-		"errorMessage": "Car not found"
-	},
-	'CAR-NOT-ELEGIBLE': {
-		"errorCode": 400,
-		"errorMessage": "The discount cannot be applied to this car"
-	},
-	'MISSING-FIELD': {
-		"errorCode": 400,
-		"errorMessage": "Some fields are missing"
-	}
-}
+const errorCodes = require("../data/errorCodes.json")
 
 app.use(express.json())
 
 app.post('/vehicles', (req, res) => {
 
-	vehiclesDb.storeVehicles(req.body, (err, data) => {
+	vehicles.storeVehicles(req.body, (err, data) => {
 
 		if (err) {
 
@@ -42,7 +29,7 @@ app.post('/vehicles', (req, res) => {
 
 app.post('/promocodes', (req, res) => {
 
-	promocodesDb.storePromocodes(req.body, (err, data) => {
+	promocodes.storePromocodes(req.body, (err, data) => {
 
 		if (err) {
 
@@ -60,16 +47,18 @@ app.get('/calculator/:id', (req, res) => {
 
 	if (req.params.id && req.params.code) {
 
-		let response = calculator.calculateDiscount(req.params.id, req.params.code)
+		calculateDiscount(req.params.id, req.params.code, (err, data) => {
 
-		if (response.error) {
+			if (err) {
 
-			let errorResponse = errorCodes[response.error]
+				let errorResponse = errorCodes[err]
 
-			res.status(errorResponse.errorCode).send({ error: errorResponse.errorMessage })
-		} else {
-			res.status(200).send(response)
-		}
+				res.status(errorResponse.errorCode).send({ error: errorResponse.errorMessage })
+			} else {
+		
+				res.status(200).send(data)
+			}
+		})
 	}
 })
 
