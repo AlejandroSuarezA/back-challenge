@@ -1,0 +1,18 @@
+{
+	"CAR-NOT-FOUND": {
+		"errorCode": 404,
+		"errorMessage": "Car not found"
+	},
+	"CAR-NOT-ELEGIBLE": {
+		"errorCode": 400,
+		"errorMessage": "The discount cannot be applied to this car"
+	},
+	"MISSING-FIELD": {
+		"errorCode": 400,
+		"errorMessage": "Some fields are missing or a wrong data type"
+	},
+	"UNEXPECTED-ERROR": {
+		"errorCode": 400,
+		"errorMessage": "Unexpected error saving the data"
+	}
+}
