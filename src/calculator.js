@@ -1,19 +1,23 @@
 const vehiclesDb = require("./collections/vehicles")
 const promocodesDb = require("./collections/promocodes")
 
-function calculateDiscount(vehicleId, promocode) {
+const errorCodesEnum = require('./enums/errorCodes.enum.js');
+const promocodeTypeEnum = require("./enums/promocodeType.enum");
 
-	let foundVehicle = vehiclesDb.getVehicle(vehicleId)
+async function calculateDiscount(vehicleId, promocode, callback) {
 
-	let foundPromocode = promocodesDb.getPromocode(promocode)
+	if (typeof vehicleId != "string" || typeof promocode != "string") {
 
-	if (foundVehicle) {
-
-		return isElegible(foundVehicle, foundPromocode)
-
+		callback(errorCodesEnum.missingField, undefined)
 	} else {
 
-		return { error: 'CAR-NOT-FOUND' }
+		let foundVehicle = await vehiclesDb.getVehicle(vehicleId)
+
+		let foundPromocode = await promocodesDb.getPromocode(promocode)
+
+		foundVehicle ?
+			isElegible(foundVehicle, foundPromocode, callback) :
+			callback(errorCodesEnum.carNotFound, undefined)
 	}
 }
 
@@ -21,10 +25,10 @@ function isElegible(vehicle, promocode, callback) {
 
 	if (promocode.vehicles.length === 0 || promocode.vehicles.includes(vehicle._id)) {
 
-		return isOnOffer(vehicle, promocode)
+		callback(undefined, isOnOffer(vehicle, promocode))
 	} else {
 
-		return { error: 'CAR-NOT-ELEGIBLE' }
+		callback(errorCodesEnum.carNotElegible, undefined)
 	}
 }
 
@@ -41,22 +45,25 @@ function isOnOffer(vehicle, promocode) {
 
 function applyPromocode(discountResponse, promocode) {
 
-	if (promocode.type === "PERCENTAGE") {
+	let amountDiscounted = 0
 
-		discountResponse.discountByCode = (promocode.discount / 100) * discountResponse.price
-		discountResponse.price -= (discountResponse.discountByCode)
+	if (promocode.type === promocodeTypeEnum.percentage) {
+
+		amountDiscounted = (promocode.discount / 100) * discountResponse.price
 	} else {
 
-		discountResponse.discountByCode = promocode.discount
-		discountResponse.price -= promocode.discount
+		amountDiscounted = promocode.discount
 	}
 
-	Object.keys(discountResponse).forEach((key) => {
-		discountResponse[key] = parseFloat(discountResponse[key].toFixed(2))
+	discountResponse.discountByCode = amountDiscounted
+	discountResponse.price -= amountDiscounted
 
+	Object.keys(discountResponse).forEach((key) => {
+
+		discountResponse[key] = parseFloat(discountResponse[key].toFixed(2))
 	})
 
 	return discountResponse
 }
 
-module.exports = { calculateDiscount, isElegible, isOnOffer, applyPromocode }
+module.exports = calculateDiscount

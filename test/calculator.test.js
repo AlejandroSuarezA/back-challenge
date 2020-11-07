@@ -1,5 +1,6 @@
 
-const calculator = require("../src/calculator")
+const calculateDiscount = require("../src/calculator")
+const errorCodesEnum = require("../src/enums/errorCodes.enum")
 
 let promocodeWildcardPercentage = 'wildCardDiscountPercentage'
 let promocodeWildcardCredit = 'wildCardDiscountCredit'
@@ -7,149 +8,98 @@ let promocodeWildcardCredit = 'wildCardDiscountCredit'
 let promocodeSpecificPercentage = 'specificDiscountPercentage'
 let promocodeSpecificCredit = 'specificDiscountCredit'
 
-describe("Vehicle not found", () => {
+let vehicleOnOffer = 'vehicleOnOffer'
 
-	test("Shouldn't find a car", () => {
+let onOfferPercentageDiscountResponse = {
+	price: 175,
+	discountByOffer: 150,
+	discountByCode: 175
+}
 
-		let errorMsg = {
-			error: 'CAR-NOT-FOUND'
+let onOfferCreditDiscountResponse = {
+	price: 300,
+	discountByOffer: 150,
+	discountByCode: 50
+}
+
+
+let vehicleNotOnOffer = 'vehicleNotOnOffer'
+
+let notOnOfferPercentageDiscountResponse = {
+	price: 250,
+	discountByOffer: 150,
+	discountByCode: 250
+}
+let notOnOfferCreditDiscountResponse = {
+	price: 450,
+	discountByOffer: 150,
+	discountByCode: 50
+}
+
+
+describe.each`
+	vehicle			|			wildcard			|			specific			|			response
+${vehicleOnOffer}		${promocodeWildcardPercentage}	${promocodeSpecificPercentage}	${onOfferPercentageDiscountResponse}
+${vehicleOnOffer}		${promocodeWildcardCredit}		${promocodeSpecificCredit}		${onOfferCreditDiscountResponse}
+
+${vehicleNotOnOffer}	${promocodeWildcardPercentage}	${promocodeSpecificPercentage}	${notOnOfferPercentageDiscountResponse}
+${vehicleNotOnOffer}	${promocodeWildcardCredit}		${promocodeSpecificCredit}		${notOnOfferCreditDiscountResponse}
+`('$vehicle', ({ vehicle, wildcard, specific, response }) => {
+
+
+
+	test(`using ${wildcard} and ${specific}`, done => {
+
+		function callback(err, data) {
+
+			expect(data).toMatchObject(response)
+			done()
 		}
 
-		expect(calculator.calculateDiscount('nonExistentCar', 'anyPromocode')).toMatchObject(errorMsg)
+		calculateDiscount(vehicle, wildcard, callback)
+
+		calculateDiscount(vehicle, specific, callback)
 	})
 })
 
-describe("Vehicle on offer", () => {
+test("Car not found", done => {
 
-	let vehicleOnOffer = 'vehicleOnOffer'
-
-	let percentageDiscountResponse = {
-		price: 175,
-		discountByOffer: 150,
-		discountByCode: 175
+	function callback(err, data) {
+		expect(err).toMatch(errorCodesEnum.carNotFound)
+		done()
 	}
 
-	let creditDiscountResponse = {
-		price: 300,
-		discountByOffer: 150,
-		discountByCode: 50
-	}
-
-	describe("Promocode applies to all cars", () => {
-
-		test("A percentage discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleOnOffer, promocodeWildcardPercentage)).toMatchObject(percentageDiscountResponse)
-		})
-
-		test("A credit discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleOnOffer, promocodeWildcardCredit)).toMatchObject(creditDiscountResponse)
-		})
-
-		test.todo("A 100% percentage discount")
-
-		test.todo("A 100% credit discount")
-
-		test.todo("An over 100% percentage discount")
-
-		test.todo("An over 100% credit discount")
-	})
-
-	describe("Promocode applies to this car", () => {
-
-		test("A percentage discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleOnOffer, promocodeSpecificPercentage)).toMatchObject(percentageDiscountResponse)
-		})
-
-		test("A credit discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleOnOffer, promocodeSpecificCredit)).toMatchObject(creditDiscountResponse)
-		})
-
-		test.todo("A 100% percentage discount")
-
-		test.todo("A 100% credit discount")
-
-		test.todo("An over 100% percentage discount")
-
-		test.todo("An over 100% credit discount")
-	})
-
-	test("Promocode is not aplicable to this car", () => {
-
-		let errorMsg = {
-			error: 'CAR-NOT-ELEGIBLE'
-		}
-
-		expect(calculator.calculateDiscount(vehicleOnOffer, 'noOneIsCompatible')).toMatchObject(errorMsg)
-	})
+	calculateDiscount('nonExistentCar', 'anyPromocode', callback)
 })
 
-describe("Vehicle is NOT on offer", () => {
+test("Promocode is not aplicable to this car", done => {
 
-	let vehicleNotOnOffer = 'vehicleNotOnOffer'
+	function callback(err, data) {
 
-	let percentageDiscountResponse = {
-		price: 250,
-		discountByOffer: 150,
-		discountByCode: 250
-	}
-	let creditDiscountResponse = {
-		price: 450,
-		discountByOffer: 150,
-		discountByCode: 50
+		expect(err).toMatch(errorCodesEnum.carNotElegible)
+		done()
 	}
 
-	describe("Promocode applies to all cars", () => {
-
-		test("A percentage discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleNotOnOffer, promocodeWildcardPercentage)).toMatchObject(percentageDiscountResponse)
-		})
-
-		test("A credit discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleNotOnOffer, promocodeWildcardCredit)).toMatchObject(creditDiscountResponse)
-		})
-
-		test.todo("A 100% percentage discount")
-
-		test.todo("A 100% credit discount")
-
-		test.todo("An over 100% percentage discount")
-
-		test.todo("An over 100% credit discount")
-	})
-
-	describe("Promocode applies to this car", () => {
-
-		test("A percentage discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleNotOnOffer, promocodeSpecificPercentage)).toMatchObject(percentageDiscountResponse)
-		})
-
-		test("A credit discount", () => {
-
-			expect(calculator.calculateDiscount(vehicleNotOnOffer, promocodeSpecificCredit)).toMatchObject(creditDiscountResponse)
-		})
-
-		test.todo("A 100% percentage discount")
-
-		test.todo("A 100% credit discount")
-
-		test.todo("An over 100% percentage discount")
-
-		test.todo("An over 100% credit discount")
-	})
-
-	test("Promocode is not aplicable to this car", () => {
-
-		let errorMsg = {
-			error: 'CAR-NOT-ELEGIBLE'
-		}
-
-		expect(calculator.calculateDiscount(vehicleNotOnOffer, 'noOneIsCompatible')).toMatchObject(errorMsg)
-	})
+	calculateDiscount('vehicleOnOffer', 'noOneIsCompatible', callback)
 })
+
+test("Wrong data type on vehicleId and promocode", done => {
+
+	debugger;
+	function callback(err, data) {
+
+		expect(err).toMatch(errorCodesEnum.missingField)
+		done()
+	}
+
+	calculateDiscount(44, 'noOneIsCompatible', callback)
+	calculateDiscount('vehicleOnOffer', 44, callback)
+})
+
+test.todo("A 100% percentage discount")
+
+test.todo("A 100% credit discount")
+
+test.todo("An over 100% percentage discount")
+
+test.todo("An over 100% credit discount")
