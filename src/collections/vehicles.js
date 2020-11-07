@@ -1,14 +1,8 @@
 const fs = require('fs');
 
+const errorCodesEnum = require('../enums/errorCodes.enum.js');
+
 const vehiclesDocPath = "./data/vehicles.json"
-
-function isValidVehicle(vehicle) {
-
-	return typeof vehicle._id == "string" &&
-		typeof vehicle.price == "number" &&
-		typeof vehicle.priceOnOffer == "number" &&
-		typeof vehicle.isOnOffer == "boolean"
-}
 
 async function storeVehicles(vehicles, callback) {
 
@@ -23,13 +17,28 @@ async function storeVehicles(vehicles, callback) {
 			addVehicle(vehicle)
 		})
 
-		await Promise.all(addVehiclesOperations)
+		try {
 
-		callback(undefined, '')
+			await Promise.all(addVehiclesOperations)
+
+			callback(undefined, '')
+		} catch (error) {
+
+			callback(errorCodesEnum.unexpectedError, undefined)
+		}
+
 	} else {
 
-		callback('MISSING-FIELD', undefined)
+		callback(errorCodesEnum.missingField, undefined)
 	}
+}
+
+function isValidVehicle(vehicle) {
+
+	return typeof vehicle._id == "string" &&
+		typeof vehicle.price == "number" &&
+		typeof vehicle.priceOnOffer == "number" &&
+		typeof vehicle.isOnOffer == "boolean"
 }
 
 function addVehicle(vehicle) {
@@ -59,11 +68,19 @@ function addVehicle(vehicle) {
 
 function getVehicle(vehicleId) {
 
-	let vehiclesData = JSON.parse(fs.readFileSync(vehiclesDocPath))
+	return new Promise((resolve, reject) => {
 
-	return vehiclesData.find((storedVehicle) => {
+		fs.readFile(vehiclesDocPath, (err, data) => {
 
-		return storedVehicle._id === vehicleId
+			let vehiclesData = JSON.parse(data)
+
+			let foundVehicle = vehiclesData.find((storedVehicle) => {
+
+				return storedVehicle._id === vehicleId
+			})
+
+			resolve(foundVehicle)
+		})
 	})
 }
 

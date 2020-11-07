@@ -1,14 +1,9 @@
 const fs = require('fs');
+
+const errorCodesEnum = require('../enums/errorCodes.enum.js');
+const promocodeTypeEnum = require('../enums/promocodeType.enum.js');
+
 const promocodesDocPath = "./data/promocodes.json"
-
-function isValidPromocode(promocode) {
-
-	return typeof promocode._id == "string" &&
-		typeof promocode.code == "string" &&
-		typeof promocode.discount == "number" &&
-		(promocode.type == "PERCENTAGE" || promocode.type == "CREDIT") &&
-		Array.isArray(promocode.vehicles)
-}
 
 async function storePromocodes(promocodes, callback) {
 
@@ -23,13 +18,28 @@ async function storePromocodes(promocodes, callback) {
 			addPromocode(promocode)
 		})
 
-		await Promise.all(addPromocodesOperations)
+		try {
 
-		callback(undefined, '')
+			await Promise.all(addPromocodesOperations)
+
+			callback(undefined, '')
+		} catch (error) {
+
+			callback(errorCodesEnum.unexpectedError, undefined)
+		}
 	} else {
 
-		callback('MISSING-FIELD', undefined)
+		callback(errorCodesEnum.missingField, undefined)
 	}
+}
+
+function isValidPromocode(promocode) {
+
+	return typeof promocode._id == "string" &&
+		typeof promocode.code == "string" &&
+		typeof promocode.discount == "number" &&
+		(promocode.type == promocodeTypeEnum.percentage || promocode.type == promocodeTypeEnum.credit) &&
+		Array.isArray(promocode.vehicles)
 }
 
 function addPromocode(promocode) {
@@ -59,11 +69,19 @@ function addPromocode(promocode) {
 
 function getPromocode(promocode) {
 
-	let promocodeData = JSON.parse(fs.readFileSync(promocodesDocPath))
+	return new Promise((resolve, reject) => {
 
-	return promocodeData.find((storedPromocode) => {
+		fs.readFile(promocodesDocPath, (err, data) => {
 
-		return storedPromocode.code === promocode
+			let promocodeData = JSON.parse(data)
+
+			let foundPromocode = promocodeData.find((storedPromocode) => {
+
+				return storedPromocode.code === promocode
+			})
+
+			resolve(foundPromocode)
+		})
 	})
 }
 
