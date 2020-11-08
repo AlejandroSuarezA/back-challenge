@@ -15,9 +15,9 @@ async function storeVehicles(vehicles, callback) {
 
 		try {
 
-			let addVehiclesOperations = vehicles.map(vehicle => addVehicle(vehicle))
-
-			await Promise.all(addVehiclesOperations)
+			for (let vehicle of vehicles) {
+				await addVehicle(vehicle)
+			}
 
 			callback(undefined, 'ok')
 		} catch (error) {

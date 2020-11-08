@@ -16,9 +16,9 @@ async function storePromocodes(promocodes, callback) {
 
 		try {
 
-			let addPromocodesOperations = promocodes.map(promocode => addPromocode(promocode))
-
-			await Promise.all(addPromocodesOperations)
+			for (let promocode of promocodes) {
+				await addPromocode(promocode)
+			}
 
 			callback(undefined, 'ok')
 		} catch (error) {

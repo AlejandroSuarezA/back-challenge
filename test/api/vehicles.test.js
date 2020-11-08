@@ -9,7 +9,7 @@ describe("Testing /vehicles", () => {
 
 		const validData = [
 			{
-				_id: "32133321223000388585abdhjhqwepio123bj",
+				_id: `_${Math.random().toString(36).substr(2, 9)}`,
 				price: 359.99,
 				priceOnOffer: 299.99,
 				isOnOffer: false

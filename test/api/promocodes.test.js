@@ -5,8 +5,8 @@ describe("POST /promocodes", () => {
 
 	const validData = [
 		{
-			_id: "5f77173b76b9921886a8315a",
-			code: "FIAT50",
+			_id: `_${Math.random().toString(36).substr(2, 9)}`,
+			code: `_${Math.random().toString(36).substr(2, 9)}`,
 			discount: 50,
 			type: "PERCENTAGE",
 			vehicles: ["5f6223d34a5a8ff0dc639dfa"]
