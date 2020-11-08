@@ -23,7 +23,8 @@ describe("Testing /vehicles", () => {
 		]
 
 		test("Should return 202 code", done => {
-			return request(app).post('/vehicles').send(validData).then(response => {
+
+			request(app).post('/vehicles').send(validData).then(response => {
 				expect(response.status).toBe(202)
 				done()
 			})
@@ -31,9 +32,7 @@ describe("Testing /vehicles", () => {
 
 	})
 
-	
 	describe("KO CODE", () => {
-
 
 		const inconsistentTypeData = [
 			{
@@ -66,7 +65,8 @@ describe("Testing /vehicles", () => {
 		]
 
 		test("Should return 400 code because of wrong type of data", done => {
-			return request(app).post('/vehicles').send(inconsistentTypeData).then(response => {
+
+			request(app).post('/vehicles').send(inconsistentTypeData).then(response => {
 				expect(response.status).toBe(400)
 				done()
 			})
@@ -74,7 +74,8 @@ describe("Testing /vehicles", () => {
 
 
 		test("Should return 400 code because of missing fields", done => {
-			return request(app).post('/vehicles').send(missingFieldsData).then(response => {
+
+			request(app).post('/vehicles').send(missingFieldsData).then(response => {
 				expect(response.status).toBe(400)
 				done()
 			})

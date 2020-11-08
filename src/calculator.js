@@ -6,18 +6,24 @@ const promocodeTypeEnum = require("./enums/promocodeType.enum");
 
 async function calculateDiscount(vehicleId, promocode, callback) {
 
-	if (typeof vehicleId != "string" || typeof promocode != "string") {
+	try {
 
-		callback(errorCodesEnum.missingField, undefined)
-	} else {
+		if (typeof vehicleId != "string" || typeof promocode != "string") {
 
-		let foundVehicle = await vehiclesDb.getVehicle(vehicleId)
+			callback(errorCodesEnum.missingField, undefined)
+		} else {
 
-		let foundPromocode = await promocodesDb.getPromocode(promocode)
+			let foundVehicle = await vehiclesDb.getVehicle(vehicleId)
 
-		foundVehicle ?
-			isElegible(foundVehicle, foundPromocode, callback) :
-			callback(errorCodesEnum.carNotFound, undefined)
+			let foundPromocode = await promocodesDb.getPromocode(promocode)
+
+			foundVehicle ?
+				isElegible(foundVehicle, foundPromocode, callback) :
+				callback(errorCodesEnum.carNotFound, undefined)
+		}
+	} catch (error) {
+
+		callback(errorCodesEnum.unexpectedError, undefined)
 	}
 }
 

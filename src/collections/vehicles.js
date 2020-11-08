@@ -13,20 +13,17 @@ async function storeVehicles(vehicles, callback) {
 
 	if (allValidEntries) {
 
-		let addVehiclesOperations = vehicles.map(vehicle => {
-			addVehicle(vehicle)
-		})
-
 		try {
+
+			let addVehiclesOperations = vehicles.map(vehicle => addVehicle(vehicle))
 
 			await Promise.all(addVehiclesOperations)
 
-			callback(undefined, '')
+			callback(undefined, 'ok')
 		} catch (error) {
 
 			callback(errorCodesEnum.unexpectedError, undefined)
 		}
-
 	} else {
 
 		callback(errorCodesEnum.missingField, undefined)
@@ -71,6 +68,8 @@ function getVehicle(vehicleId) {
 	return new Promise((resolve, reject) => {
 
 		fs.readFile(vehiclesDocPath, (err, data) => {
+
+			if (err) reject(err)
 
 			let vehiclesData = JSON.parse(data)
 

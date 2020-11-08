@@ -1,5 +1,6 @@
 
 const express = require("express");
+const helmet = require("helmet");
 const app = express();
 
 const vehicles = require("./collections/vehicles")
@@ -10,6 +11,11 @@ const calculateDiscount = require("./calculator")
 const errorCodes = require("../data/errorCodes.json")
 
 app.use(express.json())
+app.use(helmet())
+
+app.get('/', (req, res) => {
+	res.sendStatus(202)
+})
 
 app.post('/vehicles', (req, res) => {
 
@@ -45,9 +51,9 @@ app.post('/promocodes', (req, res) => {
 
 app.get('/calculator/:id', (req, res) => {
 
-	if (req.params.id && req.params.code) {
+	if (req.params.id && req.query.code) {
 
-		calculateDiscount(req.params.id, req.params.code, (err, data) => {
+		calculateDiscount(req.params.id, req.query.code, (err, data) => {
 
 			if (err) {
 
@@ -55,11 +61,18 @@ app.get('/calculator/:id', (req, res) => {
 
 				res.status(errorResponse.errorCode).send({ error: errorResponse.errorMessage })
 			} else {
-		
+
 				res.status(200).send(data)
 			}
 		})
+	} else {
+
+		res.send(400).send({error: errorCodes["MISSING-FIELD"]})
 	}
 })
+
+app.get('*', (req, res) => {
+	res.sendStatus(404);
+});
 
 module.exports = app

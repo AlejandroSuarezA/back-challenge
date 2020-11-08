@@ -14,15 +14,13 @@ async function storePromocodes(promocodes, callback) {
 
 	if (allValidEntries) {
 
-		let addPromocodesOperations = promocodes.map(promocode => {
-			addPromocode(promocode)
-		})
-
 		try {
+
+			let addPromocodesOperations = promocodes.map(promocode => addPromocode(promocode))
 
 			await Promise.all(addPromocodesOperations)
 
-			callback(undefined, '')
+			callback(undefined, 'ok')
 		} catch (error) {
 
 			callback(errorCodesEnum.unexpectedError, undefined)
@@ -72,6 +70,8 @@ function getPromocode(promocode) {
 	return new Promise((resolve, reject) => {
 
 		fs.readFile(promocodesDocPath, (err, data) => {
+
+			if (err) reject(err)
 
 			let promocodeData = JSON.parse(data)
 
