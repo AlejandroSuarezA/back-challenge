@@ -16,3 +16,7 @@
 
 Run `test` to execute jest with `--coverage` flag.
 Run `start` start the express server on `localhost:3000`.
+
+## Github actions
+
+Action on each push to master to run all test suites
